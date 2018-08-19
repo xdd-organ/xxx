@@ -18,4 +18,5 @@ public final class TcpConstant {
     public static final String CLOSE_UID = "CLOSE_UID";
 
     public final static Map<String, OutputStream> outputStreamMap = new HashMap<>();
+    public final static Map<String, OutputStream> outputStreamMap2 = new HashMap<>();
 }

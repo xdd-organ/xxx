@@ -20,7 +20,7 @@ public class TcpServiceImpl implements TcpService {
 
     private final static Map<String, OutputStream> outputStreamMap = TcpConstant.outputStreamMap;
 
-    private static final String localhost = "http://127.0.0.1:8080/moblie";
+    private static final String localhost = "http://127.0.0.1:8080/mobile";
     private static final String lock = "/lock";
     private static final String unLock = "/unLock";
 
@@ -73,7 +73,7 @@ public class TcpServiceImpl implements TcpService {
                 int length = inputStream.read(data);
                 String ret = TcpConstant.OK;
                 if (length != -1) {
-                    ret = new String(data, 1, length-1);
+                    ret = new String(data, 1, length-2);
                 }
                 return ret;
             }
