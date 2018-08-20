@@ -8,4 +8,5 @@ public interface TcpService {
 
     String open(Map<String, String> params);
 
+    String status(Map<String,String> params);
 }

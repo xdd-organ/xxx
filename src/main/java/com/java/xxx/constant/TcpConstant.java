@@ -17,6 +17,7 @@ public final class TcpConstant {
     public static final String OPEN_UID = "OPEN_UID";
     public static final String CLOSE_UID = "CLOSE_UID";
     public static final String NOT_FIND = "NOT_FIND";
+    public static final String STATUS = "STATUS";
 
     public final static Map<String, OutputStream> outputStreamMap = new HashMap<>();
     public final static Map<String, OutputStream> outputStreamMap2 = new HashMap<>();

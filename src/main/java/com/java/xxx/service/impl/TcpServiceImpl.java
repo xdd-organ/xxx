@@ -24,11 +24,12 @@ public class TcpServiceImpl implements TcpService {
     private static final String localhost = "http://127.0.0.1:8080/mobile";
     private static final String lock = "/lock";
     private static final String unLock = "/unLock";
+    private static final String status = "/status";
 
     @Override
     public String close(Map<String, String> params) {
         try {
-            String closeUid = params.get(TcpConstant.CLOSE_UID);
+            String closeUid = params.get(TcpConstant.UID);
             if (check(closeUid)) {
                 String ret = readData(lock, params);
                 return ret;
@@ -58,6 +59,22 @@ public class TcpServiceImpl implements TcpService {
             } else {
                 logger.info("设备未在线[{}]", openUid);
                 return TcpConstant.NOT_FIND;
+            }
+        } catch (Exception e) {
+            logger.error(params.toString(), e);
+            return TcpConstant.ERROR;
+        }
+    }
+
+    @Override
+    public String status(Map<String, String> params) {
+        try {
+            String uid = params.get(TcpConstant.UID);
+            if (check(uid)) {
+                String ret = readData(status, params);
+                return ret;
+            } else {
+                return TcpConstant.ERROR;
             }
         } catch (Exception e) {
             logger.error(params.toString(), e);
@@ -98,4 +115,5 @@ public class TcpServiceImpl implements TcpService {
         }
         return TcpConstant.ERROR;
     }
+
 }

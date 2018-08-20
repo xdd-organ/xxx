@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.java.xxx.constant.TcpConstant;
 import com.java.xxx.service.TcpService;
 import com.java.xxx.service.impl.TcpServiceImpl;
+import com.java.xxx.vo.LockReturn;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,25 +57,33 @@ public class TcpServer implements Runnable{
                     }
                     String type = params.get(TcpConstant.TYPE);
                     uid = params.get(TcpConstant.UID);
-                    String ret = TcpConstant.OK;
+
+                    LockReturn lockReturn = new LockReturn(uid, type, TcpConstant.OK);
                     outputStreamMap.put(uid, outputStream);
                     if (TcpConstant.REGISTER.equals(type)) { //发送设备编号，维护设备编号与会话关系
 
                     } else if (TcpConstant.CLOSE.equals(type)) { //关锁
                         //关锁的设备编号
-                        ret = service.close(params);
+                        String close = service.close(params);
+                        lockReturn.setRET(close);
                     } else if (TcpConstant.OPEN.equals(type)) { //关锁
                         //解锁的设备编号
-                        ret = service.open(params);
+                        String open = service.open(params);
+                        lockReturn.setRET(open);
                     } else if (TcpConstant.PING.equals(type)) { // ping
 
+                    }  else if (TcpConstant.STATUS.equals(type)) { // ping
+                        String open = service.status(params);
+                        lockReturn.setRET(open);
                     } else if (TcpConstant.EXIT.equals(type)) { //关闭连接
-                        outputStream.write(TcpConstant.OK.getBytes());
+                        String ret = JSONObject.toJSONString(lockReturn);
+                        outputStream.write(ret.getBytes());
                         logger.info("设备[{}:{}]，返回数据：{}", hostAddress, uid, TcpConstant.OK);
                         break;
                     } else {
-                        ret = TcpConstant.ERROR;
+                        lockReturn.setRET(TcpConstant.ERROR);
                     }
+                    String ret = JSONObject.toJSONString(lockReturn);
                     logger.info("设备[{}:{}]，返回数据：{}", hostAddress, uid, ret);
                     outputStream.write(ret.getBytes());
                 } else {
@@ -86,7 +95,7 @@ public class TcpServer implements Runnable{
         } finally {
             if (StringUtils.isNotBlank(uid))outputStreamMap.remove(uid);
             if (StringUtils.isNotBlank(hostAddress)) outputStreamMap2.remove(hostAddress);
-            logger.info("设备[{}:{}]，释放资源");
+            logger.info("设备[{}:{}]，释放资源", hostAddress, uid);
             //关闭资源
             try {
                 socket.close();
