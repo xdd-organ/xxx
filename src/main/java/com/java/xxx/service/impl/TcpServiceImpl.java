@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.java.xxx.client.HttpUtils;
 import com.java.xxx.constant.TcpConstant;
 import com.java.xxx.service.TcpService;
+import com.java.xxx.vo.LockReturn;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
@@ -45,11 +46,18 @@ public class TcpServiceImpl implements TcpService {
         String openUid = params.get(TcpConstant.OPEN_UID);
         try {
             OutputStream outputStream = outputStreamMap.get(openUid);
-            if (check(openUid)) {
-                outputStream.write(TcpConstant.OPEN.getBytes());
-                return TcpConstant.OK;
+            if (outputStream != null) {
+                if (check(openUid)) {
+                    String ret = JSONObject.toJSONString(new LockReturn(openUid, TcpConstant.OPEN, TcpConstant.OK));
+                    logger.info("向设备响应：[{}]", ret);
+                    outputStream.write(ret.getBytes());
+                    return TcpConstant.OK;
+                } else {
+                    return TcpConstant.ERROR;
+                }
             } else {
-                return TcpConstant.ERROR;
+                logger.info("设备未在线[{}]", openUid);
+                return TcpConstant.NOT_FIND;
             }
         } catch (Exception e) {
             logger.error(params.toString(), e);
