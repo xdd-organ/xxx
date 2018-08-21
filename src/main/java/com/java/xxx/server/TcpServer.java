@@ -73,6 +73,7 @@ public class TcpServer implements Runnable{
                             lockReturn.setRET(open);
                         } else {
                             String open = service.status(params);
+                            continue;
                         }
                     } else if (TcpConstant.PING.equals(type)) { // ping
 
