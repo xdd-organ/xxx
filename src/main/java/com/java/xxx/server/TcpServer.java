@@ -19,7 +19,6 @@ public class TcpServer implements Runnable{
     private static final Logger logger = LoggerFactory.getLogger(TcpServer.class);
 
     private final static Map<String, OutputStream> outputStreamMap = TcpConstant.outputStreamMap;
-    private final static Map<String, OutputStream> outputStreamMap2 = TcpConstant.outputStreamMap2;
 
     private static final TcpService service = new TcpServiceImpl();
 
@@ -34,12 +33,10 @@ public class TcpServer implements Runnable{
         String uid = null;
         String hostAddress = null;
         logger.info("已连接[{}]个客户端，连接编号[{}]", outputStreamMap.size(), outputStreamMap.keySet().toString());
-        logger.info("2已连接[{}]个客户端，连接编号[{}]", outputStreamMap2.size(), outputStreamMap2.keySet().toString());
         try (OutputStream outputStream = socket.getOutputStream();//获取客户端的OutputStream与inputStream
              InputStream inputStream = socket.getInputStream()) {
             hostAddress = socket.getInetAddress().getHostAddress();
             logger.info("主机[{}]，已连接", hostAddress);
-            outputStreamMap2.put(hostAddress, outputStream);
             while (true) {
                 //获得客户端的ip地址和主机名
                 //读取数据
@@ -99,7 +96,6 @@ public class TcpServer implements Runnable{
             logger.error("设备[" + hostAddress + ":" + uid + "]连接异常：" + e.getMessage(), e);
         } finally {
             if (StringUtils.isNotBlank(uid))outputStreamMap.remove(uid);
-            if (StringUtils.isNotBlank(hostAddress)) outputStreamMap2.remove(hostAddress);
             logger.info("设备[{}:{}]，释放资源", hostAddress, uid);
             //关闭资源
             try {
