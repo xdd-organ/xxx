@@ -67,9 +67,13 @@ public class TcpServer implements Runnable{
                         String close = service.close(params);
                         lockReturn.setRET(close);
                     } else if (TcpConstant.OPEN.equals(type)) { //关锁
-                        //解锁的设备编号
-                        String open = service.open(params);
-                        lockReturn.setRET(open);
+                        if (TcpConstant.ADMIN_UID.equals(uid)) {
+                            //解锁的设备编号
+                            String open = service.open(params);
+                            lockReturn.setRET(open);
+                        } else {
+                            String open = service.status(params);
+                        }
                     } else if (TcpConstant.PING.equals(type)) { // ping
 
                     }  else if (TcpConstant.STATUS.equals(type)) { // ping
