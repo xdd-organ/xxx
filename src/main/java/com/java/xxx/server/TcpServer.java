@@ -70,6 +70,7 @@ public class TcpServer implements Runnable{
                             lockReturn.setRET(open);
                         } else {
                             String open = service.status(params);
+                            logger.info("设备[{}:{}]，返回数据：{}", hostAddress, uid, open);
                             continue;
                         }
                     } else if (TcpConstant.PING.equals(type)) { // ping
