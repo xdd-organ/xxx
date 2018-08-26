@@ -21,7 +21,7 @@ public class TcpServiceImpl implements TcpService {
 
     private final static Map<String, OutputStream> outputStreamMap = TcpConstant.outputStreamMap;
 
-    private static final String localhost = "http://127.0.0.1:8080/mobile";
+    private static final String localhost = "https://www.chmbkh.com/mobile";
     private static final String lock = "/lock";
     private static final String unLock = "/unLock";
     private static final String status = "/status";
