@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+	http://www.springframework.org/schema/util 
+	http://www.springframework.org/schema/util/spring-util-4.1.xsd"
+	   default-lazy-init="false">
+	
+	<!-- 监听类 -->
+	<bean id="listener"
+		class="com.java.common.jms.GroupQueueMessageListenerContainer"
+		init-method="start">
+		<property name="messageListener">
+			<bean class="com.java.common.jms.MsgListener">
+				<property name="iService" ref="messageService" /><!-- 监听类 -->
+			</bean>
+		</property>
+		<property name="brokerURLs" ref="brokerUrls"></property>
+		<property name="maxConnection" value="1"></property>
+		<property name="groupQueueName" value="msg-http-tcp"></property>
+		<property name="concurrentConsumers" value="2"></property>
+		<property name="maxConcurrentConsumers" value="10"></property>
+	</bean>
+
+	<!--  应用停止前清理对象    -->
+	<util:map id="serviceListenerMap" map-class="java.util.HashMap">
+		<entry key="query-merchant-core-listener" value-ref="listener" />
+	</util:map>
+</beans>

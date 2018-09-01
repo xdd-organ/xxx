@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd"
+	   default-lazy-init="false">
+
+	<!-- 发送类 -->
+	<bean id="msgSender" class="com.java.common.jms.AdvancedGroupQueueSender"
+		init-method="start">
+		<property name="brokerURLs" ref="brokerUrls"></property>
+		<property name="maxConnection" value="1"></property>
+		<property name="groupQueueName" value="msg-tcp-http"></property>
+	</bean>
+</beans>
