@@ -2,6 +2,7 @@ package com.java.mbkh.server.handler;
 
 import com.alibaba.fastjson.JSONObject;
 import com.java.common.jms.AdvancedGroupQueueSender;
+import com.java.common.jms.GroupQueueMessageListenerContainer;
 import com.java.common.redis.service.RedisService;
 import com.java.mbkh.server.bean.TcpServerBean;
 import com.java.mbkh.server.constant.ServerConstant;
@@ -42,6 +43,8 @@ public class EchoServerHandler extends SimpleChannelInboundHandler<String> {
     private AdvancedGroupQueueSender msgSender;
     @Autowired
     private ChannelManager channelManager;
+    @Autowired
+    private GroupQueueMessageListenerContainer messageListener;
 
     /**
      * 有新的连接加入

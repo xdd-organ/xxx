@@ -23,7 +23,7 @@ public class MessageService extends MqServiceImpl {
     public void doService(String jsonStr) {
         LOGGER.info("接收到消息：{}", jsonStr);
         Map<String, String> jsonMap = JSONObject.parseObject(jsonStr, Map.class);
-        String uid = jsonMap.get(jsonMap.get("UID"));
+        String uid = jsonMap.get("UID");
         int i = channelManager.sendMsgByUid(uid, jsonStr);
         if (i == 1) {
             LOGGER.info("发送消息成功，uid；{}", uid);
