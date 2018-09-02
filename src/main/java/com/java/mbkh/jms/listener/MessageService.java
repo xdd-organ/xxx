@@ -16,8 +16,6 @@ public class MessageService extends MqServiceImpl {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageService.class);
 
-    private ChannelGroup channels = ChannelManager.channels;
-
     @Autowired
     private ChannelManager channelManager;
 
@@ -25,9 +23,8 @@ public class MessageService extends MqServiceImpl {
     public void doService(String jsonStr) {
         LOGGER.info("接收到消息：{}", jsonStr);
         Map<String, String> jsonMap = JSONObject.parseObject(jsonStr, Map.class);
-        String uid = jsonMap.get(jsonMap.get("uid"));
-        String msg = jsonMap.get(jsonMap.get("msg"));
-        int i = channelManager.sendMsgByUid(uid, msg);
+        String uid = jsonMap.get(jsonMap.get("UID"));
+        int i = channelManager.sendMsgByUid(uid, jsonStr);
         if (i == 1) {
             LOGGER.info("发送消息成功，uid；{}", uid);
         } else {

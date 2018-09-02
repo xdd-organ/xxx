@@ -1,6 +1,6 @@
 package com.java.mbkh.server.bean;
 
-import io.netty.channel.Channel;
+import io.netty.channel.ChannelId;
 
 import java.io.Serializable;
 
@@ -10,13 +10,13 @@ public class TcpServerBean implements Serializable {
 
     private String id;//channelId
     private String host;//客户端ip
-    private Channel Channel;//
+    private ChannelId channelId;//
     private String uid;//设备uid
 
-    public TcpServerBean(String id, String host, io.netty.channel.Channel channel) {
+    public TcpServerBean(String id, String host, ChannelId channelId) {
         this.id = id;
         this.host = host;
-        Channel = channel;
+        this.channelId = channelId;
     }
 
     public String getId() {
@@ -35,12 +35,12 @@ public class TcpServerBean implements Serializable {
         this.host = host;
     }
 
-    public io.netty.channel.Channel getChannel() {
-        return Channel;
+    public ChannelId getChannelId() {
+        return channelId;
     }
 
-    public void setChannel(io.netty.channel.Channel channel) {
-        Channel = channel;
+    public void setChannelId(ChannelId channelId) {
+        this.channelId = channelId;
     }
 
     public String getUid() {

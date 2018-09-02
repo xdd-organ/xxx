@@ -84,6 +84,7 @@ public class EchoServerHandler extends SimpleChannelInboundHandler<String> {
             put("channelId", channelId);
         }});
         msgSender.sendMsg(sendMsg, ServerConstant.DEFAULT);
+        LOGGER.info("客户端[{}],连接[{}]发送消息成功：{}", channelManager.getHost(channel), channelId, sendMsg);
     }
     
     /**

@@ -7,7 +7,9 @@ import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +34,15 @@ public class ChannelManager {
     public void addChannel(Channel channel) {
         String channelId = this.getChannelId(channel);
         String host = this.getHost(channel);
-        TcpServerBean tcpServerBean = new TcpServerBean(channelId, host, channel);
+        TcpServerBean tcpServerBean = new TcpServerBean(channelId, host, channel.id());
         redisService.hset(ServerConstant.CHANNEL_MAP.getBytes(), channelId.getBytes(), SerializationUtils.serialize(tcpServerBean));
         channels.add(channel);
     }
 
-    public void regiestChannel(String channelId, String uid) {
+    public void registerChannel(String channelId, String uid) {
         redisService.hset(ServerConstant.CHANNEL_UID_MAP, uid, channelId);
         List<byte[]> hmget = redisService.hmget(ServerConstant.CHANNEL_MAP.getBytes(), channelId.getBytes());
-        if (!CollectionUtils.isEmpty(hmget)) {
+        if (!CollectionUtils.isEmpty(hmget) && !ArrayUtils.isEmpty(hmget.get(0))) {
             TcpServerBean tcpServerBean = SerializationUtils.deserialize(hmget.get(0));
             tcpServerBean.setUid(uid);
             redisService.hset(ServerConstant.CHANNEL_MAP.getBytes(), channelId.getBytes(), SerializationUtils.serialize(tcpServerBean));
@@ -51,7 +53,7 @@ public class ChannelManager {
         String channelId = this.getChannelId(channel);
         channels.remove(channel);
         List<byte[]> hmget = redisService.hmget(ServerConstant.CHANNEL_MAP.getBytes(), channelId.getBytes());
-        if (!CollectionUtils.isEmpty(hmget)) {
+        if (!CollectionUtils.isEmpty(hmget) && !ArrayUtils.isEmpty(hmget.get(0))) {
             TcpServerBean tcpServerBean = SerializationUtils.deserialize(hmget.get(0));
             redisService.hdel(ServerConstant.CHANNEL_MAP.getBytes(), channelId.getBytes());
             redisService.hdel(ServerConstant.CHANNEL_UID_MAP, tcpServerBean.getUid());
@@ -60,7 +62,7 @@ public class ChannelManager {
 
     public TcpServerBean getTcpServerBeanByChannelId(String channelId) {
         List<byte[]> list = redisService.hmget(ServerConstant.CHANNEL_MAP.getBytes(), channelId.getBytes());
-        if (!CollectionUtils.isEmpty(list)) {
+        if (!CollectionUtils.isEmpty(list) && !ArrayUtils.isEmpty(list.get(0))) {
             return SerializationUtils.deserialize(list.get(0));
         }
         return null;
@@ -69,7 +71,7 @@ public class ChannelManager {
     public Channel getChannelByChannelId(String channelId) {
         TcpServerBean bean = this.getTcpServerBeanByChannelId(channelId);
         if (bean != null) {
-            return bean.getChannel();
+            return channels.find(bean.getChannelId());
         }
         return null;
     }
@@ -80,10 +82,10 @@ public class ChannelManager {
 
     public TcpServerBean getTcpServerBeanByUid(String uid) {
         List<String> list = redisService.hmget(ServerConstant.CHANNEL_UID_MAP, uid);
-        if (!CollectionUtils.isEmpty(list)) {
+        if (!CollectionUtils.isEmpty(list) && !StringUtils.isEmpty(list.get(0))) {
             byte[] bytes = list.get(0).getBytes();
             List<byte[]> list2 = redisService.hmget(ServerConstant.CHANNEL_MAP.getBytes(), bytes);
-            if (!CollectionUtils.isEmpty(list)) {
+            if (!CollectionUtils.isEmpty(list) && !ArrayUtils.isEmpty(list2.get(0))) {
                 return SerializationUtils.deserialize(list2.get(0));
             }
         }
@@ -93,14 +95,14 @@ public class ChannelManager {
     public Channel getChannelByUid(String uid) {
         TcpServerBean bean = this.getTcpServerBeanByUid(uid);
         if (bean != null) {
-            return bean.getChannel();
+            return channels.find(bean.getChannelId());
         }
         return null;
     }
 
     public void removeChannelByUid(String uid) {
         List<String> list = redisService.hmget(ServerConstant.CHANNEL_UID_MAP, uid);
-        if (!CollectionUtils.isEmpty(list)) {
+        if (!CollectionUtils.isEmpty(list) && !StringUtils.isEmpty(list.get(0))) {
             byte[] channelId = list.get(0).getBytes();
             redisService.hdel(ServerConstant.CHANNEL_MAP.getBytes(), channelId);
         }

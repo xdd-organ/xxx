@@ -7,7 +7,7 @@
 	http://www.springframework.org/schema/util/spring-util-4.1.xsd">
 
 	<util:list id="brokerUrls" list-class="java.util.ArrayList">
-		<value>${jms.urls:tcp://localhost:61616}</value><!-- jms.urls=tcp://localhost:61616 -->
+		<value>${jms.urls}</value><!-- jms.urls=tcp://localhost:61616 -->
 	</util:list>
 	
 </beans>
